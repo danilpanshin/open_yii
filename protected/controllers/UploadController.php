@@ -1,32 +1,32 @@
 <?php
 
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UploadController extends Controller
 {
+    const SHEETS = ['first', 'second'];
+
     function actionIndex()
     {
         $dir = Yii::getPathOfAlias('application.uploads'); 
         $uploaded = false;
+        $result = false;
         $model = new Upload();
         if (isset($_POST['Upload'])) {
             $model->attributes = $_POST['Upload']; 
             $file = CUploadedFile::getInstance($model, 'file'); 
             if ($model->validate()) {
-                $uploaded = $file->saveAs($dir . '/' . $file->getName()); 
+                $filePath = $dir . '/' . $file->getName(); 
+                $uploaded = $file->saveAs($filePath);
             }
         }
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Hello World !');
+        if ($uploaded) {
+            $result = Upload::handle($filePath);
+        }
 
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('hello world.xlsx');
-        
         $this->render('index', [ 
+            'result' => $result,
             'model' => $model, 
             'uploaded' => $uploaded, 
             'dir' => $dir,

@@ -5,7 +5,7 @@ class m191211_235536_create_bankings_table extends CDbMigration
 	public function up()
 	{
 		$this->createTable('bankings', array(
-            'id' => 'pk',
+            'id' => 'integer PRIMARY KEY AUTOINCREMENT NOT NULL',
             'customer_id' => 'integer NOT NULL REFERENCES customers(id)',
             'transfer' => 'integer NOT NULL',
 		));
